@@ -7,11 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace CALENDERDEMO
 {
     public partial class Form1 : Form
     {
+        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn
+            (
+                int nLeft,
+                int nTop,
+                int nRight,
+                int nBottom,
+                int nWidthElllipse,
+                int nHeightElllipse
+            );
+
         List<Label> DateList = new List<Label>();
         public Form1()
         {
@@ -203,7 +215,106 @@ namespace CALENDERDEMO
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            button2.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button2.Width, button2.Height, 40, 40));
+            button3.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button3.Width, button3.Height, 40, 40));
+            button4.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button4.Width, button4.Height, 40, 40));
+            button5.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button5.Width, button5.Height, 40, 40));
+            button6.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button6.Width, button6.Height, 40, 40));
+            button6.Enabled = false;
+
+            LOAD_NEXT_MONTHS();
             GENERATE_CALENDER(2021, 04);
+
+        }
+
+        private void LOAD_NEXT_MONTHS()
+        {
+            List<Button> Btn_List = new List<Button>();
+            Btn_List.Add(button2);
+            Btn_List.Add(button3);
+            Btn_List.Add(button4);
+            Btn_List.Add(button5);
+            Btn_List.Add(button6);
+
+            try
+            {
+                DateTime date = DateTime.Now;
+
+                for (int i = 0; i < 5; i++)
+                {
+                    DateTime date2 = date.AddMonths(i+1);
+                    Btn_List[i].Text = date2.ToString("MMMM");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DateTime dateTimenow = DateTime.Now.AddMonths(1);               
+                GENERATE_CALENDER(dateTimenow.Year,dateTimenow.Month);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DateTime dateTimenow = DateTime.Now.AddMonths(2);
+                GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DateTime dateTimenow = DateTime.Now.AddMonths(3);
+                GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DateTime dateTimenow = DateTime.Now.AddMonths(4);
+                GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DateTime dateTimenow = DateTime.Now.AddMonths(5);
+                GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }
