@@ -8,11 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Data.SqlClient;
 
 namespace CALENDERDEMO
 {
     public partial class Form1 : Form
     {
+        string G_YEAR;
+        string G_MONTH;
+
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
             (
@@ -24,7 +28,8 @@ namespace CALENDERDEMO
                 int nHeightElllipse
             );
 
-        List<Label> DateList = new List<Label>();
+        List<Button> DateList = new List<Button>();
+        
         public Form1()
         {
             InitializeComponent();
@@ -134,57 +139,68 @@ namespace CALENDERDEMO
 
         private void GENERATE_CALENDER(int YEAR,int MONTH)
         {
-            //List<Label> DateList = new List<Label>();
+
+            G_YEAR = YEAR.ToString();
+            G_MONTH = MONTH.ToString().PadLeft(2,'0');
 
 
+            DateList.Add(button7);
+            DateList.Add(button8);
+            DateList.Add(button9);
+            DateList.Add(button10);
+            DateList.Add(button11);
+            DateList.Add(button12);
+            DateList.Add(button13);
 
-            DateList.Add(label1);
-            DateList.Add(label2);
-            DateList.Add(label3);
-            DateList.Add(label4);
-            DateList.Add(label5);
-            DateList.Add(label6);
-            DateList.Add(label7);
+            DateList.Add(button14);
+            DateList.Add(button15);
+            DateList.Add(button16);
+            DateList.Add(button17);
+            DateList.Add(button18);
+            DateList.Add(button19);
+            DateList.Add(button20);
 
-            DateList.Add(label8);
-            DateList.Add(label9);
-            DateList.Add(label10);
-            DateList.Add(label11);
-            DateList.Add(label12);
-            DateList.Add(label13);
-            DateList.Add(label14);
+            DateList.Add(button21);
+            DateList.Add(button22);
+            DateList.Add(button23);
+            DateList.Add(button24);
+            DateList.Add(button25);
+            DateList.Add(button26);
+            DateList.Add(button27);
 
-            DateList.Add(label15);
-            DateList.Add(label16);
-            DateList.Add(label17);
-            DateList.Add(label18);
-            DateList.Add(label19);
-            DateList.Add(label20);
-            DateList.Add(label21);
+            DateList.Add(button28);
+            DateList.Add(button29);
+            DateList.Add(button30);
+            DateList.Add(button31);
+            DateList.Add(button32);
+            DateList.Add(button33);
+            DateList.Add(button34);
 
-            DateList.Add(label22);
-            DateList.Add(label23);
-            DateList.Add(label24);
-            DateList.Add(label25);
-            DateList.Add(label26);
-            DateList.Add(label27);
-            DateList.Add(label28);
-
-            DateList.Add(label29);
-            DateList.Add(label30);
-            DateList.Add(label31);
-            DateList.Add(label32);
-            DateList.Add(label33);
-            DateList.Add(label34);
-            DateList.Add(label35);
+            DateList.Add(button35);
+            DateList.Add(button36);
+            DateList.Add(button37);
+            DateList.Add(button38);
+            DateList.Add(button39);
+            DateList.Add(button40);
+            DateList.Add(button41);
 
             foreach (var item in DateList)
             {
                 item.Text = "";
+                item.Enabled = true;
+                item.ForeColor = Color.Black;
+                item.BackColor = Color.FromArgb(255, 192, 128);
             }
+
+            DISABLE_SAT_SUN();
+
+            List<int> holidays = GET_HOLIDAYS_TO_ARRAY(YEAR,MONTH);
+
 
             try
             {
+
+
                 int daysInmonth = DateTime.DaysInMonth(YEAR, MONTH);
 
                 DateTime myDate = new DateTime(YEAR,MONTH,1);
@@ -202,7 +218,12 @@ namespace CALENDERDEMO
                     {
                         _index = _index - 35;
                     }
-
+                    if (holidays.Any(x=>x==i))
+                    {                        
+                        DateList[_index].BackColor = Color.Red;
+                        DateList[_index].ForeColor = Color.White;
+                        DateList[_index].Enabled = false;
+                    }
                     DateList[_index].Text = date;
                 }
 
@@ -220,11 +241,42 @@ namespace CALENDERDEMO
             button4.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button4.Width, button4.Height, 40, 40));
             button5.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button5.Width, button5.Height, 40, 40));
             button6.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button6.Width, button6.Height, 40, 40));
-            button6.Enabled = false;
+            //button6.Enabled = false;
 
             LOAD_NEXT_MONTHS();
-            GENERATE_CALENDER(2021, 04);
+            //DISABLE_SAT_SUN();
+            GENERATE_CALENDER(DateTime.Now.Year, DateTime.Now.Month);
 
+        }
+
+        private void DISABLE_SAT_SUN()
+        {
+            List<Button> BTNSSS = new List<Button>();
+            try
+            {
+                BTNSSS.Add(button12);
+                BTNSSS.Add(button13);
+                BTNSSS.Add(button19);
+                BTNSSS.Add(button20);
+                BTNSSS.Add(button26);
+                BTNSSS.Add(button27);
+                BTNSSS.Add(button33);
+                BTNSSS.Add(button34);
+                BTNSSS.Add(button40);
+                BTNSSS.Add(button41);
+
+                foreach (var item in BTNSSS)
+                {
+                    item.Enabled = false;
+                    item.BackColor = Color.DarkGray;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void LOAD_NEXT_MONTHS()
@@ -249,6 +301,54 @@ namespace CALENDERDEMO
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        public List<int> GET_HOLIDAYS_TO_ARRAY(int YEAR,int MONTH)
+        {
+            List<int> HOLARR = new List<int>();
+            //HOLARR.Clear();
+            try
+            {
+                string query = "SELECT * FROM HOLIDAY WHERE SYSTEM_DATE_NO LIKE '"+YEAR+MONTH.ToString().PadLeft(2,'0')+"%'";
+                SqlCommand cmd = new SqlCommand(query, GET_DB_CONN());
+                cmd.Connection.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    if (dr["SYSTEM_DATE_NO"] != null)
+                        HOLARR.Add(Convert.ToInt32(dr["SYSTEM_DATE_NO"]?.ToString().Substring(6, 2)));
+                }
+                cmd.Connection.Close();
+
+                return HOLARR;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+
+        public SqlConnection GET_DB_CONN()
+        {
+            try
+            {
+                SqlConnectionStringBuilder csb = new SqlConnectionStringBuilder()
+                {
+                    DataSource = "DESKTOP-42BFQ1G",
+                    UserID = "sa",
+                    Password = "#image123",
+                    InitialCatalog = "MCSCDKHB"
+                };
+                SqlConnection con = new SqlConnection(csb.ConnectionString);
+                return con;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
             }
         }
 
@@ -315,6 +415,17 @@ namespace CALENDERDEMO
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void GET_DATE(object sender, EventArgs e)
+        {
+            var btn = sender as Button;
+            string date = btn.Text;
+            if (!string.IsNullOrEmpty(date))
+            {
+                MessageBox.Show(G_YEAR + "-" + G_MONTH + "-" + date);
+            }
+            //MessageBox.Show(G_YEAR+"-"+G_MONTH+"-"+ btn.Text);
         }
     }
 }
