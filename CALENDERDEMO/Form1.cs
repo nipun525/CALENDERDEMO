@@ -235,6 +235,8 @@ namespace CALENDERDEMO
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            button1.BackColor = Color.Green;
+            button1.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button2.Width, button2.Height, 40, 40));
             button2.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button2.Width, button2.Height, 40, 40));
             button3.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button3.Width, button3.Height, 40, 40));
             button4.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, button4.Width, button4.Height, 40, 40));
@@ -244,7 +246,112 @@ namespace CALENDERDEMO
 
             LOAD_NEXT_MONTHS();
             //DISABLE_SAT_SUN();
-            GENERATE_CALENDER(DateTime.Now.Year, DateTime.Now.Month);
+            //GENERATE_CALENDER(DateTime.Now.Year, DateTime.Now.Month);
+            
+
+            LOAD_CURRENT_MONTH();
+        }
+
+        private void LOAD_CURRENT_MONTH()
+        {
+            int YEAR = DateTime.Now.Year;
+            int MONTH = DateTime.Now.Month;
+
+            int _DAY = DateTime.Now.Day;
+
+            G_YEAR = YEAR.ToString();
+            G_MONTH = MONTH.ToString().PadLeft(2,'0');
+
+            DateList.Add(button7);
+            DateList.Add(button8);
+            DateList.Add(button9);
+            DateList.Add(button10);
+            DateList.Add(button11);
+            DateList.Add(button12);
+            DateList.Add(button13);
+
+            DateList.Add(button14);
+            DateList.Add(button15);
+            DateList.Add(button16);
+            DateList.Add(button17);
+            DateList.Add(button18);
+            DateList.Add(button19);
+            DateList.Add(button20);
+
+            DateList.Add(button21);
+            DateList.Add(button22);
+            DateList.Add(button23);
+            DateList.Add(button24);
+            DateList.Add(button25);
+            DateList.Add(button26);
+            DateList.Add(button27);
+
+            DateList.Add(button28);
+            DateList.Add(button29);
+            DateList.Add(button30);
+            DateList.Add(button31);
+            DateList.Add(button32);
+            DateList.Add(button33);
+            DateList.Add(button34);
+
+            DateList.Add(button35);
+            DateList.Add(button36);
+            DateList.Add(button37);
+            DateList.Add(button38);
+            DateList.Add(button39);
+            DateList.Add(button40);
+            DateList.Add(button41);
+
+            foreach (var item in DateList)
+            {
+                item.Text = "";
+                item.Enabled = true;
+                item.ForeColor = Color.Black;
+                item.BackColor = Color.FromArgb(255, 192, 128);
+            }
+
+            DISABLE_SAT_SUN();
+
+            List<int> holidays = GET_HOLIDAYS_TO_ARRAY(YEAR, MONTH);
+            try
+            {
+
+                int daysInmonth = DateTime.DaysInMonth(YEAR, MONTH);
+
+                DateTime myDate = new DateTime(YEAR, MONTH, 1);
+
+                int weekDay = (int)myDate.DayOfWeek;
+                if (weekDay == 0)
+                    weekDay = 7;
+
+                for (int i = 1; i <= daysInmonth; i++)
+                {
+                    string date = i.ToString().PadLeft(2, '0');
+                    int _index = i + weekDay - 2;
+
+                    if (_index > 34)
+                    {
+                        _index = _index - 35;
+                    }
+
+                    if (i<=_DAY)
+                    {
+                        DateList[_index].Enabled = false;
+                    }
+
+                    if (holidays.Any(x => x == i))
+                    {
+                        DateList[_index].BackColor = Color.Red;
+                        DateList[_index].ForeColor = Color.White;
+                        DateList[_index].Enabled = false;
+                    }
+                    DateList[_index].Text = date;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void DISABLE_SAT_SUN()
@@ -272,7 +379,6 @@ namespace CALENDERDEMO
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show(ex.Message);
             }
         }
@@ -280,6 +386,7 @@ namespace CALENDERDEMO
         private void LOAD_NEXT_MONTHS()
         {
             List<Button> Btn_List = new List<Button>();
+            Btn_List.Add(button1);
             Btn_List.Add(button2);
             Btn_List.Add(button3);
             Btn_List.Add(button4);
@@ -290,9 +397,9 @@ namespace CALENDERDEMO
             {
                 DateTime date = DateTime.Now;
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i <= 5; i++)
                 {
-                    DateTime date2 = date.AddMonths(i+1);
+                    DateTime date2 = date.AddMonths(i);
                     Btn_List[i].Text = date2.ToString("MMMM");
                 }
             }
@@ -335,7 +442,7 @@ namespace CALENDERDEMO
             {
                 SqlConnectionStringBuilder csb = new SqlConnectionStringBuilder()
                 {
-                    DataSource = "DESKTOP-42BFQ1G",
+                    DataSource = "DESKTOP-3CR1187",
                     UserID = "sa",
                     Password = "#image123",
                     InitialCatalog = "MCSCDKHB"
@@ -356,6 +463,11 @@ namespace CALENDERDEMO
             {
                 DateTime dateTimenow = DateTime.Now.AddMonths(1);               
                 GENERATE_CALENDER(dateTimenow.Year,dateTimenow.Month);
+
+                CHANGE_BTN_COLOR();
+
+                var btn = sender as Button;
+                btn.BackColor = Color.Green;
             }
             catch (Exception ex)
             {
@@ -369,6 +481,11 @@ namespace CALENDERDEMO
             {
                 DateTime dateTimenow = DateTime.Now.AddMonths(2);
                 GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+
+                CHANGE_BTN_COLOR();
+
+                var btn = sender as Button;
+                btn.BackColor = Color.Green;
             }
             catch (Exception ex)
             {
@@ -382,6 +499,11 @@ namespace CALENDERDEMO
             {
                 DateTime dateTimenow = DateTime.Now.AddMonths(3);
                 GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+
+                CHANGE_BTN_COLOR();
+
+                var btn = sender as Button;
+                btn.BackColor = Color.Green;
             }
             catch (Exception ex)
             {
@@ -395,6 +517,11 @@ namespace CALENDERDEMO
             {
                 DateTime dateTimenow = DateTime.Now.AddMonths(4);
                 GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+
+                CHANGE_BTN_COLOR();
+
+                var btn = sender as Button;
+                btn.BackColor = Color.Green;
             }
             catch (Exception ex)
             {
@@ -408,6 +535,11 @@ namespace CALENDERDEMO
             {
                 DateTime dateTimenow = DateTime.Now.AddMonths(5);
                 GENERATE_CALENDER(dateTimenow.Year, dateTimenow.Month);
+
+                CHANGE_BTN_COLOR();
+
+                var btn = sender as Button;
+                btn.BackColor = Color.Green;
             }
             catch (Exception ex)
             {
@@ -424,5 +556,47 @@ namespace CALENDERDEMO
                 MessageBox.Show(G_YEAR + "-" + G_MONTH + "-" + date);
             }
         }
+
+        private void button1_Click_2(object sender, EventArgs e)
+        {
+            try
+            {
+                LOAD_CURRENT_MONTH();
+
+                CHANGE_BTN_COLOR();
+
+                var btn = sender as Button;
+                btn.BackColor = Color.Green;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void CHANGE_BTN_COLOR()
+        {
+            List<Button> Btn_List = new List<Button>();
+            Btn_List.Add(button1);
+            Btn_List.Add(button2);
+            Btn_List.Add(button3);
+            Btn_List.Add(button4);
+            Btn_List.Add(button5);
+            Btn_List.Add(button6);
+
+            try
+            {
+                foreach (var item in Btn_List)
+                {
+                    item.BackColor = Color.Coral;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+        }
+
     }
 }
