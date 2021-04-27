@@ -200,7 +200,6 @@ namespace CALENDERDEMO
             try
             {
 
-
                 int daysInmonth = DateTime.DaysInMonth(YEAR, MONTH);
 
                 DateTime myDate = new DateTime(YEAR,MONTH,1);
@@ -246,7 +245,6 @@ namespace CALENDERDEMO
             LOAD_NEXT_MONTHS();
             //DISABLE_SAT_SUN();
             GENERATE_CALENDER(DateTime.Now.Year, DateTime.Now.Month);
-
         }
 
         private void DISABLE_SAT_SUN()
@@ -425,7 +423,6 @@ namespace CALENDERDEMO
             {
                 MessageBox.Show(G_YEAR + "-" + G_MONTH + "-" + date);
             }
-            //MessageBox.Show(G_YEAR+"-"+G_MONTH+"-"+ btn.Text);
         }
     }
 }
